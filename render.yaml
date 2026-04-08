@@ -1,0 +1,9 @@
+# https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: trueturist
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health

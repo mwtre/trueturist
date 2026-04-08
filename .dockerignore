@@ -1,0 +1,11 @@
+**/.venv
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+**/.git
+**/.ruff_cache
+**/dist
+**/*.egg-info
+flight-explorer/.env
+.env
+.env.*
