@@ -3,6 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="TrueTurist — flight route and calendar discovery. Run the scanner locally; this site is the project home on GitHub Pages."
+    />
     <title>TrueTurist</title>
     <style>
       :root {
@@ -12,6 +16,7 @@
         --muted: #8b9aab;
         --accent: #42a5f5;
         --card: #1a2332;
+        --border: rgba(255, 255, 255, 0.08);
       }
       @media (prefers-color-scheme: light) {
         :root {
@@ -20,6 +25,7 @@
           --muted: #5c6b7a;
           --accent: #1565c0;
           --card: #fff;
+          --border: rgba(0, 0, 0, 0.08);
         }
       }
       * {
@@ -31,52 +37,78 @@
         font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
         background: var(--bg);
         color: var(--fg);
-        line-height: 1.6;
+        line-height: 1.65;
       }
       main {
-        max-width: 44rem;
+        max-width: 40rem;
         margin: 0 auto;
-        padding: 2.5rem 1.25rem 4rem;
+        padding: 2.75rem 1.25rem 4rem;
       }
       h1 {
-        font-size: clamp(1.75rem, 4vw, 2.25rem);
+        font-size: clamp(1.85rem, 4vw, 2.35rem);
         font-weight: 700;
-        letter-spacing: -0.02em;
-        margin: 0 0 0.5rem;
+        letter-spacing: -0.03em;
+        margin: 0 0 0.65rem;
       }
       .lead {
         color: var(--muted);
-        font-size: 1.1rem;
-        margin: 0 0 2rem;
+        font-size: 1.125rem;
+        margin: 0 0 2.25rem;
+        max-width: 36rem;
       }
       .card {
         background: var(--card);
+        border: 1px solid var(--border);
         border-radius: 12px;
-        padding: 1.25rem 1.5rem;
-        margin-bottom: 1.25rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        padding: 1.35rem 1.5rem;
+        margin-bottom: 1rem;
       }
       .card h2 {
-        font-size: 1rem;
-        margin: 0 0 0.75rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin: 0 0 0.85rem;
         color: var(--accent);
       }
+      .card p {
+        margin: 0 0 0.85rem;
+      }
+      .card p:last-child {
+        margin-bottom: 0;
+      }
       pre {
-        margin: 0;
+        margin: 0 0 0.85rem;
+        padding: 1rem 1.1rem;
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--bg) 88%, var(--fg));
         overflow-x: auto;
-        font-size: 0.85rem;
-        line-height: 1.45;
+        font-size: 0.82rem;
+        line-height: 1.5;
+      }
+      @media (prefers-color-scheme: light) {
+        pre {
+          background: #e8eef5;
+        }
       }
       code {
         font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+        font-size: 0.92em;
       }
       a {
         color: var(--accent);
+        text-decoration-thickness: 1px;
+        text-underline-offset: 3px;
       }
-      footer {
+      a:hover {
+        text-decoration-thickness: 2px;
+      }
+      .note {
         color: var(--muted);
-        font-size: 0.9rem;
-        margin-top: 2.5rem;
+        font-size: 0.95rem;
+        margin-top: 2rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid var(--border);
       }
     </style>
   </head>
@@ -84,39 +116,32 @@
     <main>
       <h1>TrueTurist</h1>
       <p class="lead">
-        Flight discovery tooling: a local web UI scans routes and calendars (powered by the
-        <code>fli</code> library). This page is the static site on GitHub Pages; the live scanner
-        runs on your machine or any host where you start the API.
+        Explore flight routes and date grids with a small web UI backed by the
+        <code>fli</code> library. You are on the static project site; scans run wherever you host the
+        Python API.
       </p>
 
       <div class="card">
-        <h2>Repository</h2>
+        <h2>Source</h2>
         <p>
-          Source code:
-          <a href="https://github.com/mwtre/trueturist">github.com/mwtre/trueturist</a>
+          <a href="https://github.com/mwtre/trueturist">https://github.com/mwtre/trueturist</a>
         </p>
       </div>
 
       <div class="card">
-        <h2>Run the app locally</h2>
-        <p>From the <code>flight-explorer</code> folder (with <code>fli</code> as a sibling):</p>
-        <pre><code>make setup
+        <h2>Run locally</h2>
+        <p>Clone, then from <code>flight-explorer</code> (repo layout already has <code>fli</code> next to it):</p>
+        <pre><code>git clone https://github.com/mwtre/trueturist.git
+cd trueturist/flight-explorer
+make setup
 make run</code></pre>
-        <p>Then open <code>http://127.0.0.1:8765</code> — health check: <code>/api/health</code>.</p>
+        <p>Open <a href="http://127.0.0.1:8765">http://127.0.0.1:8765</a>. Check <code>/api/health</code> if something looks off.</p>
       </div>
 
-      <div class="card">
-        <h2>Why GitHub Pages shows this page</h2>
-        <p>
-          Pages only serves static files. The trip finder UI talks to FastAPI streaming endpoints;
-          those must be running separately (local <code>uvicorn</code> or your own server). This site
-          documents how to do that.
-        </p>
-      </div>
-
-      <footer>
-        Deployed from the <code>docs/</code> folder via GitHub Actions → GitHub Pages.
-      </footer>
+      <p class="note">
+        GitHub Pages only serves this HTML. The trip finder uses FastAPI and server-sent events, so run
+        <code>uvicorn</code> locally (or deploy that stack elsewhere); Pages cannot run that backend.
+      </p>
     </main>
   </body>
 </html>
