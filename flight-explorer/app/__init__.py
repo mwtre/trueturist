@@ -1,0 +1,1 @@
+"""Flight explorer web application."""

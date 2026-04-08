@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Find trips — best round trips by month</title>
+    <link rel="preconnect" href="https://upload.wikimedia.org" crossorigin />
+    <link rel="preconnect" href="https://dynamic-media-cdn.tripadvisor.com" crossorigin />
+    <link rel="dns-prefetch" href="//upload.wikimedia.org" />
+    <link rel="dns-prefetch" href="//dynamic-media-cdn.tripadvisor.com" />
+    <link rel="stylesheet" href="/static/styles.css" />
+    <link rel="stylesheet" href="/static/user.css" />
+    <script src="/static/user.js" defer></script>
+  </head>
+  <body class="user-shell">
+    <header class="user-top">
+      <div class="user-top-inner">
+        <div class="user-top-lead">
+          <div class="user-top-title-row">
+            <h1>Find trips</h1>
+            <div class="user-top-aircraft" aria-hidden="true">
+              <svg width="200" height="120" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Fuselage -->
+                <path d="M20 60 Q30 45 80 50 Q160 52 180 60 Q160 70 80 70 Q30 75 20 60" fill="#1E88E5" stroke="#263238" stroke-width="8" stroke-linejoin="round"/>
+
+                <!-- Nose -->
+                <path d="M180 60 Q195 58 200 60 Q195 62 180 60" fill="#1E88E5" stroke="#263238" stroke-width="8"/>
+
+                <!-- Cockpit windows -->
+                <rect x="172" y="53" width="8" height="5" rx="1" fill="#263238"/>
+                <rect x="162" y="53" width="8" height="5" rx="1" fill="#263238"/>
+
+                <!-- Passenger windows -->
+                <rect x="110" y="55" width="6" height="6" rx="1" fill="#263238"/>
+                <rect x="100" y="55" width="6" height="6" rx="1" fill="#263238"/>
+                <rect x="90" y="55" width="6" height="6" rx="1" fill="#263238"/>
+                <rect x="80" y="55" width="6" height="6" rx="1" fill="#263238"/>
+
+                <!-- Wings -->
+                <path d="M70 60 L25 30 L20 40 Z" fill="#1565C0" stroke="#263238" stroke-width="6"/>
+                <path d="M70 60 L25 85 L20 75 Z" fill="#1565C0" stroke="#263238" stroke-width="6"/>
+
+                <!-- Tail fin -->
+                <path d="M35 45 L25 20 L40 25 Z" fill="#1E88E5" stroke="#263238" stroke-width="5"/>
+
+                <!-- Horizontal stabilizers -->
+                <path d="M40 35 L15 30 L10 35 Z" fill="#1565C0" stroke="#263238" stroke-width="4"/>
+                <path d="M40 75 L15 80 L10 75 Z" fill="#1565C0" stroke="#263238" stroke-width="4"/>
+
+                <!-- Engines -->
+                <rect x="55" y="68" width="18" height="8" rx="4" fill="#263238"/>
+                <rect x="55" y="45" width="18" height="8" rx="4" fill="#263238"/>
+              </svg>
+            </div>
+          </div>
+          <p class="user-top-meta">
+            Cheapest <strong>round trip</strong> per destination for your month (Google Flights + hotel floor from
+            Xotelo). City photos via Wikipedia; hotel images from TripAdvisor listings. Combined EUR total uses a
+            <strong>rough</strong> USD→EUR rate for display only.
+          </p>
+        </div>
+        <nav class="user-nav">
+          <a href="/explorer">Advanced tools</a>
+          ·
+          <a href="/api/health" target="_blank" rel="noopener">API health</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="user-main">
+      <form id="user-form" class="user-form panel" autocomplete="off">
+        <label class="user-field">
+          <span>Fly from</span>
+          <select id="user-origin" aria-label="Origin airport">
+            <option value="AMS">Amsterdam (AMS)</option>
+            <option value="CDG">Paris CDG</option>
+            <option value="LHR">London Heathrow</option>
+            <option value="FRA">Frankfurt</option>
+            <option value="MUC">Munich</option>
+            <option value="BCN">Barcelona</option>
+            <option value="MAD">Madrid</option>
+            <option value="BRU">Brussels</option>
+            <option value="DUB">Dublin</option>
+            <option value="BER">Berlin</option>
+            <option value="OTHER">Other…</option>
+          </select>
+        </label>
+        <label class="user-field user-hidden" id="user-origin-custom-wrap">
+          <span>Airport code (IATA)</span>
+          <input type="text" id="user-origin-custom" maxlength="3" placeholder="e.g. VIE" />
+        </label>
+        <label class="user-field">
+          <span>Month to travel</span>
+          <input type="month" id="user-month" required />
+        </label>
+        <label class="user-field">
+          <span>Trip length</span>
+          <select id="user-trip-days" aria-label="Trip length in days">
+            <option value="5">5 days</option>
+            <option value="7" selected>7 days</option>
+            <option value="10">10 days</option>
+            <option value="14">14 days</option>
+          </select>
+        </label>
+        <label class="user-field user-field-full">
+          <span>Where to look</span>
+          <select id="user-region" aria-label="Destination region">
+            <option value="all">Worldwide (default list)</option>
+            <option value="eu">Europe (EU) only</option>
+          </select>
+        </label>
+        <label class="user-field user-field-full user-checkbox-row">
+          <input type="checkbox" id="user-hotel-only" />
+          <span>Only show destinations with a hotel estimate (hide flight-only)</span>
+        </label>
+        <button type="submit" class="user-submit" id="user-search">Search best trips</button>
+      </form>
+
+      <p id="user-status" class="user-status muted" aria-live="polite"></p>
+      <div id="user-progress-wrap" class="user-progress-wrap user-hidden">
+        <div id="user-progress-bar" class="user-progress-bar"></div>
+      </div>
+
+      <section id="user-results" class="user-card-grid" aria-label="Trip results"></section>
+    </main>
+  </body>
+</html>

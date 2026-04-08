@@ -1,0 +1,270 @@
+:root {
+  --bg: #0f1419;
+  --surface: #1a222d;
+  --border: #2d3a4a;
+  --text: #e8eef4;
+  --muted: #8b9bab;
+  --accent: #3d9cf5;
+  --accent-dim: #2563b8;
+  --ok: #34c759;
+  --warn: #ff9f0a;
+  --err: #ff453a;
+  --radius: 10px;
+  font-family: "SF Pro Text", system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.45;
+  min-height: 100vh;
+}
+
+a {
+  color: var(--accent);
+}
+
+.header {
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(180deg, #141c26 0%, var(--bg) 100%);
+}
+
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.75rem 1.25rem 1.5rem;
+}
+
+.header h1 {
+  margin: 0 0 0.35rem;
+  font-size: 1.65rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.sub {
+  margin: 0;
+  color: var(--muted);
+  max-width: 52ch;
+  font-size: 0.95rem;
+}
+
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.25rem 1.25rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.35rem;
+}
+
+.panel h2 {
+  margin: 0 0 1rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.panel-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.controls .form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.25rem;
+  align-items: flex-end;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.field.narrow input[type="number"] {
+  min-width: 4.5rem;
+  max-width: 6rem;
+}
+
+.field input[type="number"] {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.95rem;
+}
+
+.field input[type="text"],
+.field input[type="date"],
+.field select {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.95rem;
+  min-width: 10rem;
+  text-transform: uppercase;
+}
+
+.field select {
+  text-transform: none;
+  cursor: pointer;
+}
+
+.field.checkbox {
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 0.35rem;
+}
+
+.field.field-disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.mono {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
+}
+
+.btn {
+  border: none;
+  border-radius: 8px;
+  padding: 0.55rem 1.15rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn.primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn.primary:hover {
+  background: var(--accent-dim);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.status {
+  margin-top: 1rem;
+  font-size: 0.88rem;
+  min-height: 1.25rem;
+}
+
+.status.muted {
+  color: var(--muted);
+}
+
+.progress-wrap {
+  margin-top: 0.75rem;
+  height: 4px;
+  background: var(--bg);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--ok));
+  border-radius: 4px;
+  transition: width 0.2s ease;
+}
+
+.chart-wrap {
+  position: relative;
+  height: 320px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.data-table th,
+.data-table td {
+  padding: 0.55rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.data-table th {
+  background: var(--bg);
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.data-table tbody tr:hover {
+  background: rgba(61, 156, 245, 0.06);
+}
+
+.data-table td.num {
+  font-variant-numeric: tabular-nums;
+}
+
+.data-table td.airport-name {
+  color: var(--muted);
+  font-size: 0.82rem;
+  max-width: 16rem;
+}
+
+.data-table td.schedule-cell {
+  font-size: 0.78rem;
+  line-height: 1.4;
+  white-space: normal;
+  max-width: 14rem;
+}
+
+.row-error {
+  color: var(--err);
+}
+
+.badge {
+  font-weight: 400;
+  opacity: 0.85;
+}
+
+.hint {
+  margin: 0.75rem 0 0;
+  font-size: 0.82rem;
+}
+
+.chart-note {
+  font-weight: 400;
+  color: var(--muted);
+}

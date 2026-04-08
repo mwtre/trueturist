@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Flight explorer — advanced</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.6/dist/chart.umd.min.js" defer></script>
+    <script src="/static/app.js" defer></script>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-inner">
+        <p class="sub" style="margin-bottom: 0.5rem">
+          <a href="/">← Simple search</a>
+        </p>
+        <h1>Flight explorer (advanced)</h1>
+        <p class="sub">
+          Scan cheapest fares from one origin to <strong>~180 worldwide IATA airports</strong> by default (EU hubs
+          plus Americas, Middle East, Asia, Oceania, Africa). Supports <strong>round trip (A/R)</strong> and
+          <strong>multiple outbound days</strong> — the table shows the <strong>best price per destination</strong>
+          across those days (via
+          <a href="https://github.com/punitarani/fli" rel="noopener">fli</a>). Filters (non-EU, exclude UK, etc.)
+          only narrow which of those airports are queried; Google may still return no fare for some pairs.
+        </p>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="panel controls quick-panel">
+        <h2 class="panel-title">Quick — best round trip (A/R)</h2>
+        <p class="hint muted" style="margin-top: 0">
+          Pick <strong>origin</strong> and <strong>region</strong>. Uses the <strong>calendar</strong> search: start
+          tomorrow, <strong>6 months</strong> ahead, <strong>7-night</strong> trip. <em>EU</em> = destination in the
+          EU-27; <em>International</em> = outside the EU (e.g. UK, US, Turkey, Switzerland). Cheapest out/return
+          <em>dates</em> only — no times.
+        </p>
+        <form id="quick-form" class="form">
+          <label class="field">
+            <span>Origin (IATA)</span>
+            <input type="text" id="quick-origin" name="origin" value="AMS" maxlength="3" required />
+          </label>
+          <label class="field">
+            <span>Region</span>
+            <select id="quick-region" name="region" aria-label="Destination region">
+              <option value="all">All destinations</option>
+              <option value="eu">EU countries only</option>
+              <option value="international">International (non-EU)</option>
+            </select>
+          </label>
+          <label class="field checkbox" title="Applies to All and International; UK is already outside EU-27">
+            <input type="checkbox" id="quick-exclude-uk" />
+            <span>Exclude UK</span>
+          </label>
+          <button type="submit" id="quick-run" class="btn primary">Find best A/R trips</button>
+        </form>
+        <div id="quick-status" class="status muted" aria-live="polite"></div>
+        <div class="progress-wrap quick-progress" hidden>
+          <div id="quick-progress-bar" class="progress-bar" style="width: 0%"></div>
+        </div>
+      </section>
+
+      <section class="panel controls">
+        <form id="scan-form" class="form">
+          <label class="field">
+            <span>Origin (IATA)</span>
+            <input type="text" id="origin" name="origin" value="AMS" maxlength="3" required />
+          </label>
+          <label class="field">
+            <span>Outbound from</span>
+            <input type="date" id="date-from" name="date_from" required />
+          </label>
+          <label class="field">
+            <span>Outbound through</span>
+            <input type="date" id="date-to" name="date_to" required />
+          </label>
+          <label class="field checkbox">
+            <input type="checkbox" id="round-trip" name="round_trip" />
+            <span>Round trip (A/R)</span>
+          </label>
+          <label class="field narrow" id="trip-days-wrap" title="Return date = outbound + this many days">
+            <span>Trip length (days)</span>
+            <input type="number" id="trip-days" name="trip_days" value="7" min="1" max="28" />
+          </label>
+          <label class="field checkbox">
+            <input type="checkbox" id="non-stop" name="non_stop" />
+            <span>Non-stop only</span>
+          </label>
+          <label class="field checkbox" title="Destination airport must be outside the EU (27). UK, Switzerland, Norway, Turkey, etc. still appear.">
+            <input type="checkbox" id="non-eu-only" name="non_eu_only" />
+            <span>Non-EU destination only</span>
+          </label>
+          <label class="field checkbox" title="Same country as origin (e.g. AMS–EIN) is skipped">
+            <input type="checkbox" id="exclude-domestic" name="exclude_domestic" />
+            <span>Exclude domestic</span>
+          </label>
+          <label class="field checkbox" title="Skip Great Britain, Northern Ireland, Jersey, Guernsey, Isle of Man (IATA → ISO)">
+            <input type="checkbox" id="exclude-uk" name="exclude_uk" />
+            <span>Exclude UK</span>
+          </label>
+          <button type="submit" id="run" class="btn primary">Run scan</button>
+        </form>
+        <p class="hint muted">
+          Outbound window: max <strong>14</strong> days. A/R uses return = outbound + trip length. Schedule shows
+          <strong>local</strong> first-leg departure → last-leg arrival per direction (from Google).
+        </p>
+        <div id="status" class="status muted" aria-live="polite"></div>
+        <div class="progress-wrap" hidden>
+          <div id="progress-bar" class="progress-bar" style="width: 0%"></div>
+        </div>
+      </section>
+
+      <section class="panel controls">
+        <h2 class="panel-title">Automate: best A/R in a long horizon</h2>
+        <p class="hint muted" style="margin-top: 0">
+          Uses the <strong>calendar</strong> API (like <code>fli dates --round</code>): one search per destination covers the whole period (~few calls per 61-day chunk). You fix
+          <strong>trip length</strong>; dates shown are the cheapest outbound/return pair found. Times-of-day are not returned by this API (use grid scan for schedules).
+        </p>
+        <form id="calendar-form" class="form">
+          <label class="field">
+            <span>Origin (IATA)</span>
+            <input type="text" id="cal-origin" name="origin" value="AMS" maxlength="3" required />
+          </label>
+          <label class="field">
+            <span>Horizon start</span>
+            <input type="date" id="cal-from" name="from_date" required />
+          </label>
+          <label class="field narrow">
+            <span>Months ahead</span>
+            <input type="number" id="cal-months" name="months" value="6" min="1" max="12" />
+          </label>
+          <label class="field narrow">
+            <span>Trip length (days)</span>
+            <input type="number" id="cal-trip-days" name="trip_days" value="7" min="1" max="28" />
+          </label>
+          <label class="field checkbox">
+            <input type="checkbox" id="cal-non-stop" name="non_stop" />
+            <span>Non-stop only</span>
+          </label>
+          <label class="field checkbox" title="Only non–EU-27 destinations">
+            <input type="checkbox" id="cal-non-eu-only" name="non_eu_only" />
+            <span>Non-EU destination only</span>
+          </label>
+          <label class="field checkbox">
+            <input type="checkbox" id="cal-exclude-domestic" name="exclude_domestic" />
+            <span>Exclude domestic</span>
+          </label>
+          <label class="field checkbox">
+            <input type="checkbox" id="cal-exclude-uk" name="exclude_uk" />
+            <span>Exclude UK</span>
+          </label>
+          <button type="submit" id="cal-run" class="btn primary">Run calendar scan</button>
+        </form>
+        <div id="cal-status" class="status muted" aria-live="polite"></div>
+        <div class="progress-wrap cal-progress" hidden>
+          <div id="cal-progress-bar" class="progress-bar" style="width: 0%"></div>
+        </div>
+      </section>
+
+      <section class="panel controls hotel-addon">
+        <h2 class="panel-title">Hotels (optional)</h2>
+        <p class="hint muted" style="margin-top: 0">
+          After a <strong>round trip</strong> or <strong>calendar</strong> run, Xotelo adds a <strong>floor
+          nightly rate (USD)</strong> per destination (TripAdvisor city → several listings, parallel
+          <strong>/rates</strong>, best OTA). Flight and hotel currencies differ; totals are not merged.
+          Official hotel star ratings are not in the API; “5★ class” uses TripAdvisor traveler rating ≥ 4.5.
+        </p>
+        <div class="form" style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end">
+          <label class="field checkbox">
+            <input type="checkbox" id="with-hotels" checked />
+            <span>Add hotel estimates (Xotelo)</span>
+          </label>
+          <label class="field narrow" title="How many cheapest flight rows to enrich">
+            <span>Top N</span>
+            <input type="number" id="hotel-top-n" value="24" min="1" max="40" />
+          </label>
+          <label class="field checkbox" title="TripAdvisor average rating ≥ 4.5; picks the cheapest nightly among those properties">
+            <input type="checkbox" id="hotel-five-star" />
+            <span>5★ class (TA ≥ 4.5), best price</span>
+          </label>
+          <label class="field narrow" title="How many cities Xotelo queries at once (higher = faster, more load on their API)">
+            <span>Cities ∥</span>
+            <select id="hotel-workers">
+              <option value="3">3</option>
+              <option value="5" selected>5</option>
+              <option value="8">8</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <section class="panel chart-panel">
+        <h2>Lowest fares (top 18) <span class="chart-note" id="chart-note"></span></h2>
+        <div class="chart-wrap">
+          <canvas id="price-chart" height="120"></canvas>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Best per destination <span id="count-badge" class="badge"></span></h2>
+        <p class="hint muted" style="margin: 0 0 0.75rem">
+          <strong>Calendar / quick</strong> runs only have outbound/return <em>dates</em> from Google’s calendar:
+          leg times, stops, and block duration show after a <strong>grid</strong> round-trip search.
+          Hotel columns fill when <strong>Add hotel estimates</strong> is on (Top N cheapest rows).
+        </p>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Code</th>
+                <th>Airport</th>
+                <th>Price</th>
+                <th>Out</th>
+                <th>Ret</th>
+                <th title="Grid search: local departure/arrival times. Calendar: dates only.">Schedule (local)</th>
+                <th title="Xotelo floor rate (USD); Top N rows when hotels enabled.">Hotel /nt USD</th>
+                <th title="Nightly × stay nights (check-out − check-in).">Hotel stay USD</th>
+                <th title="OTA name for sampled listing; not a booking link.">Hotel OTA</th>
+                <th title="Stop count from grid search only.">Stops</th>
+                <th title="Total block time from grid search only.">Duration</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

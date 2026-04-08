@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TrueTurist</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #0f1419;
+        --fg: #e7eef7;
+        --muted: #8b9aab;
+        --accent: #42a5f5;
+        --card: #1a2332;
+      }
+      @media (prefers-color-scheme: light) {
+        :root {
+          --bg: #f4f7fb;
+          --fg: #1a2332;
+          --muted: #5c6b7a;
+          --accent: #1565c0;
+          --card: #fff;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        background: var(--bg);
+        color: var(--fg);
+        line-height: 1.6;
+      }
+      main {
+        max-width: 44rem;
+        margin: 0 auto;
+        padding: 2.5rem 1.25rem 4rem;
+      }
+      h1 {
+        font-size: clamp(1.75rem, 4vw, 2.25rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin: 0 0 0.5rem;
+      }
+      .lead {
+        color: var(--muted);
+        font-size: 1.1rem;
+        margin: 0 0 2rem;
+      }
+      .card {
+        background: var(--card);
+        border-radius: 12px;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1.25rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      }
+      .card h2 {
+        font-size: 1rem;
+        margin: 0 0 0.75rem;
+        color: var(--accent);
+      }
+      pre {
+        margin: 0;
+        overflow-x: auto;
+        font-size: 0.85rem;
+        line-height: 1.45;
+      }
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+      }
+      a {
+        color: var(--accent);
+      }
+      footer {
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin-top: 2.5rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>TrueTurist</h1>
+      <p class="lead">
+        Flight discovery tooling: a local web UI scans routes and calendars (powered by the
+        <code>fli</code> library). This page is the static site on GitHub Pages; the live scanner
+        runs on your machine or any host where you start the API.
+      </p>
+
+      <div class="card">
+        <h2>Repository</h2>
+        <p>
+          Source code:
+          <a href="https://github.com/mwtre/trueturist">github.com/mwtre/trueturist</a>
+        </p>
+      </div>
+
+      <div class="card">
+        <h2>Run the app locally</h2>
+        <p>From the <code>flight-explorer</code> folder (with <code>fli</code> as a sibling):</p>
+        <pre><code>make setup
+make run</code></pre>
+        <p>Then open <code>http://127.0.0.1:8765</code> — health check: <code>/api/health</code>.</p>
+      </div>
+
+      <div class="card">
+        <h2>Why GitHub Pages shows this page</h2>
+        <p>
+          Pages only serves static files. The trip finder UI talks to FastAPI streaming endpoints;
+          those must be running separately (local <code>uvicorn</code> or your own server). This site
+          documents how to do that.
+        </p>
+      </div>
+
+      <footer>
+        Deployed from the <code>docs/</code> folder via GitHub Actions → GitHub Pages.
+      </footer>
+    </main>
+  </body>
+</html>
