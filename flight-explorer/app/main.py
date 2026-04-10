@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import os
 import time
 import urllib.error
 import urllib.request
@@ -20,6 +21,7 @@ from fastapi.templating import Jinja2Templates
 from app.calendar_scan import scan_roundtrip_best_dates
 from app.destination_context import enrich_destination_wiki_context
 from app.hotel_enrich import enrich_rows_with_hotels
+from app.hf_video import text_to_video
 from app.scanner import scan_from_origin
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -93,6 +95,38 @@ async def api_health() -> dict:
         ],
         "notes": "degraded = optional check failed (e.g. network); scans need fli. Setup: make setup in flight-explorer.",
     }
+
+
+@app.post("/api/video/generate")
+async def api_video_generate(payload: dict) -> dict:
+    """Generate a short video from a text prompt (HF Inference providers).
+
+    Requires `HF_TOKEN` in environment variables (set it in Render).
+    """
+    prompt = str(payload.get("prompt", "")).strip()
+    model = str(payload.get("model", "")).strip() or "tencent/HunyuanVideo"
+    provider = str(payload.get("provider", "")).strip() or "fal-ai"
+
+    if not prompt:
+        raise HTTPException(status_code=422, detail="Missing prompt")
+
+    hf_token = os.environ.get("HF_TOKEN")
+    if not hf_token:
+        raise HTTPException(status_code=400, detail="Missing HF_TOKEN server env var")
+
+    try:
+        result = await asyncio.to_thread(
+            text_to_video,
+            prompt=prompt,
+            model=model,
+            provider=provider,
+            hf_token=hf_token,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e)[:300]) from e
+
+    # Return raw result; it varies by provider/model (often contains a URL).
+    return {"ok": True, "provider": provider, "model": model, "result": result}
 
 
 def _validate_dates(date_from: str, date_to: str) -> None:

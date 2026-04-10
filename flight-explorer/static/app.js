@@ -51,6 +51,13 @@
   const calProgressWrap = document.querySelector(".cal-progress");
   const calProgressBar = document.getElementById("cal-progress-bar");
 
+  const videoForm = document.getElementById("video-form");
+  const videoPromptEl = document.getElementById("video-prompt");
+  const videoModelEl = document.getElementById("video-model");
+  const videoProviderEl = document.getElementById("video-provider");
+  const videoRunBtn = document.getElementById("video-run");
+  const videoStatusEl = document.getElementById("video-status");
+
   let chart = null;
   let activeAbortController = null;
 
@@ -157,6 +164,52 @@
     const label = `Quick A/R (${regLabel}) · ${fromDate} +${QUICK_MONTHS} mo · ${QUICK_TRIP_DAYS}d trip`;
     runSseScan(apiUrl("/api/calendar/stream", qs), label, quickStatusEl, quickProgressBar, quickProgressWrap);
   });
+
+  if (videoForm) {
+    videoForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const prompt = (videoPromptEl?.value || "").trim();
+      const model = (videoModelEl?.value || "").trim() || "tencent/HunyuanVideo";
+      const provider = (videoProviderEl?.value || "").trim() || "fal-ai";
+
+      if (!prompt) {
+        videoStatusEl.textContent = "Enter a prompt.";
+        videoStatusEl.classList.remove("muted");
+        return;
+      }
+
+      videoRunBtn.disabled = true;
+      videoStatusEl.classList.remove("muted");
+      videoStatusEl.textContent = "Generating…";
+      try {
+        const res = await fetch("/api/video/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt, model, provider }),
+        });
+        const data = await res.json().catch(() => null);
+        if (!res.ok) {
+          const detail = data && (data.detail || data.error) ? String(data.detail || data.error) : `HTTP ${res.status}`;
+          videoStatusEl.textContent = `Error: ${detail}`;
+          return;
+        }
+
+        const resultStr = data?.result ? JSON.stringify(data.result, null, 2) : JSON.stringify(data, null, 2);
+        videoStatusEl.textContent = "OK";
+        const pre = document.createElement("pre");
+        pre.style.marginTop = ".5rem";
+        const code = document.createElement("code");
+        code.textContent = resultStr;
+        pre.appendChild(code);
+        videoStatusEl.appendChild(pre);
+      } catch (err) {
+        videoStatusEl.textContent = `Error: ${String(err)}`;
+      } finally {
+        videoRunBtn.disabled = false;
+      }
+    });
+  }
 
   function formatDuration(min) {
     if (min == null || min < 0 || !Number.isFinite(min)) return "—";

@@ -5,3 +5,4 @@ fastapi>=0.115.6
 uvicorn[standard]>=0.34.0
 jinja2>=3.1.0
 airportsdata>=20230401.0
+huggingface_hub>=0.26.0

@@ -61,6 +61,30 @@
       </section>
 
       <section class="panel controls">
+        <h2 class="panel-title">Video (AI)</h2>
+        <p class="hint muted" style="margin-top: 0">
+          Generates a short video from a prompt using Hugging Face Inference providers. Requires server env
+          <code>HF_TOKEN</code>.
+        </p>
+        <form id="video-form" class="form">
+          <label class="field">
+            <span>Prompt</span>
+            <input type="text" id="video-prompt" placeholder="A young man walking on the street" required />
+          </label>
+          <label class="field">
+            <span>Model</span>
+            <input type="text" id="video-model" value="tencent/HunyuanVideo" />
+          </label>
+          <label class="field">
+            <span>Provider</span>
+            <input type="text" id="video-provider" value="fal-ai" />
+          </label>
+          <button type="submit" id="video-run" class="btn">Generate video</button>
+        </form>
+        <div id="video-status" class="status muted" aria-live="polite"></div>
+      </section>
+
+      <section class="panel controls">
         <form id="scan-form" class="form">
           <label class="field">
             <span>Origin (IATA)</span>
