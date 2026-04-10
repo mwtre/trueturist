@@ -18,6 +18,10 @@ def test_text_to_video_calls_inference_client(monkeypatch):
     fake_hub = types.SimpleNamespace(InferenceClient=FakeInferenceClient)
     monkeypatch.setitem(sys.modules, "huggingface_hub", fake_hub)
 
+    # Ensure `flight-explorer/app` is importable as `app` when running tests
+    # from the repo root (Render / CI / local).
+    monkeypatch.syspath_prepend("flight-explorer")
+
     from app.hf_video import text_to_video
 
     out = text_to_video(
