@@ -155,6 +155,12 @@ async def index(request: Request) -> HTMLResponse:
     return templates.TemplateResponse(request, "index.html", {})
 
 
+@app.get("/video", response_class=HTMLResponse)
+async def video_page(request: Request) -> HTMLResponse:
+    """Minimal page to test text-to-video generation."""
+    return templates.TemplateResponse(request, "video.html", {})
+
+
 @app.get("/explorer", response_class=HTMLResponse)
 async def explorer_page(request: Request) -> HTMLResponse:
     """Full multi-panel scanner (calendar, grid, charts)."""

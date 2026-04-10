@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TrueTurist — video test</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <script src="/static/video.js" defer></script>
+  </head>
+  <body>
+    <header class="header">
+      <div class="header-inner">
+        <p class="sub" style="margin-bottom: 0.5rem">
+          <a href="/">← Home</a>
+          ·
+          <a href="/explorer">Explorer</a>
+          ·
+          <a href="/api/health" target="_blank" rel="noopener">API health</a>
+        </p>
+        <h1>Video generator (test)</h1>
+        <p class="sub">Sends a prompt to <code>POST /api/video/generate</code>. Requires <code>HF_TOKEN</code> on the server.</p>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="panel controls" style="max-width: 900px; margin: 0 auto">
+        <form id="video-form" class="form" autocomplete="off">
+          <label class="field" style="grid-column: 1 / -1">
+            <span>Prompt</span>
+            <input
+              type="text"
+              id="video-prompt"
+              placeholder="A young man walking on the street"
+              required
+            />
+          </label>
+          <label class="field">
+            <span>Model</span>
+            <input type="text" id="video-model" value="tencent/HunyuanVideo" />
+          </label>
+          <label class="field">
+            <span>Provider</span>
+            <input type="text" id="video-provider" value="fal-ai" />
+          </label>
+          <button type="submit" id="video-run" class="btn primary" style="align-self: end">Generate</button>
+        </form>
+
+        <div id="video-status" class="status muted" aria-live="polite"></div>
+        <pre id="video-output" style="margin-top: 0.75rem; display: none"><code></code></pre>
+      </section>
+    </main>
+  </body>
+</html>
+
